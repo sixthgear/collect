@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include "hash.h"
 
-HT_GENERATE_TYPE(int, int);
-HT_GENERATE_TYPE(float, float);	
+HASH_GENERATE_TYPE(int);
+HASH_GENERATE_TYPE(float);	
 
 int 
 main()
