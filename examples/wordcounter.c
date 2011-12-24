@@ -38,32 +38,33 @@ main (int argc, char const *argv[])
 		/* look for valid characters. */
 		/* special characters - and ' are only allowed mid-word */
 		if (isalnum(c) || i > 0 && (c == '\'' || c == '-')) {
-			/* append c and null byte to the buffer */
 			buf[i++] = tolower(c);
-			buf[i] = '\0';			
-			/* break on buffer overflow */
 			if (i >= max_buffer-1)
-				break;				
-			/* next character */
+				break;
 			continue;
 		}
 		
 		/* found a delimiting character */
 		/* skip if the buffer is empty */
-		if (i == 0)			
+		if (i == 0)
 			continue;
-		/* remove any trailing special characters */
+		
+		/* append null byte */
+		buf[i] = '\0';
+		
+		/* remove any trailing special characters */		
 		while (!isalnum(buf[i]) && i > 0)
-			buf[i--] = '\0';		
+			buf[i--] = '\0';
+		
 		/* find out if we've already stored this word */
-		if (ht_has_key(wt, buf))
-			/* retrieve the count if so */
+		if (ht_has_key(wt, buf))			
 			count = ht_get_int(wt, buf);
 		else
-			/* otherwise default to 0 */
 			count = 0;
+		
 		/* add or update the word, incrementing count */
-		ht_add_int(wt, buf, count+1);		
+		ht_add_int(wt, buf, count+1);
+		
 		/* clear the buffer for the next word */
 		buf[0] = '\0';
 		i = 0;
