@@ -6,24 +6,41 @@
 
 int tests_run = 0;
 	
-VECT_GENERATE_TYPE(int)	
+VECT_GENERATE_TYPE(int)
 VECT_GENERATE_NAME(uint64_t, ui64)
 
-static char * test_resize() {
-	int result;
+static char *
+test_pushpop() 
+{
+	int result = 0;
 	vect_int *vi = vect_init_int(1);
-	vect_push_int(vi, 1);
-	vect_push_int(vi, 2);
-	vect_push_int(vi, 3);
-	vect_push_int(vi, 4);
-	vect_push_int(vi, 5);
-	result = vi->capacity;
+	for (int i=0; i<100; i++) 
+		vect_push_int(vi, i);	
+	while(vi->size)
+		result += vect_pop_int(vi);
+		
+	mu_assert("error pushpop: result != 4950", result == 4950);
+	mu_assert("error pushpop: vi->size != 0", vi->size == 0);
 	vect_free(vi);
-	mu_assert("error: vi->capacity != 8", result == 8);
 	return 0;
 }
 
-static char * test_fibs_build() {	
+static char * 
+test_resize() 
+{
+	vect_int *vi = vect_init_int(1);
+	for (int i=0; i<257; i++) {
+		vect_push_int(vi, i);
+	}
+		
+	mu_assert("error resize: vi->capacity != 512", vi->capacity == 512);
+	vect_free(vi);
+	return 0;
+}
+
+static char * 
+test_fibs_build() 
+{
 	/* build fibs sequence */
 	uint64_t result;
 	vect_ui64 *vl = vect_init_ui64(8);
@@ -37,12 +54,17 @@ static char * test_fibs_build() {
 		vect_push_ui64(vl, a);
 	}		
 	result = vect_at_ui64(vl, vl->size-1);
-	vect_free(vl);		
-	mu_assert("error: result != 12200160415121876738", result == 12200160415121876738ULL);
+	
+	mu_assert("error fibs: result != 12200160415121876738", 
+			       result == 12200160415121876738ULL);
+	vect_free(vl);
 	return 0;
 }
 
-static char * all_tests() {
+static char * 
+all_tests() 
+{
+	mu_run_test(test_pushpop);
 	mu_run_test(test_resize);
 	mu_run_test(test_fibs_build);
 	return 0;

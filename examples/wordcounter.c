@@ -13,8 +13,8 @@ typedef struct wc_tuple {
 	unsigned int count;
 } wc_tuple;
 
-HASH_GENERATE_NAME(unsigned int, int);
-VECT_GENERATE_NAME(wc_tuple, wc);
+HASH_GENERATE_NAME(unsigned int, int)
+VECT_GENERATE_NAME(wc_tuple, wc)
 
 int cmp_wc(const void *a, const void *b);
 
