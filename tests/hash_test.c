@@ -10,13 +10,13 @@ HASH_GENERATE_TYPE(float)
 
 static char *
 test_probes()
-{	
+{
 	table *ht[2];
 	int result[2];
 	ht[0] = ht_init_int(11, 32, ht_hash, ht_lin_probe);
 	ht[1] = ht_init_int(13, 32, ht_hash, ht_quad_probe);
-	
-	for (int i=0; i<2; i++) {		
+
+	for (int i=0; i<2; i++) {
 		result[i] = 0;
 		ht_add_int(ht[i], "one", 1);
 		ht_add_int(ht[i], "two", 2);
@@ -25,11 +25,11 @@ test_probes()
 		ht_add_int(ht[i], "five", 5);
 		ht_add_int(ht[i], "six", 6);
 		ht_add_int(ht[i], "seven", 7);
-		ht_add_int(ht[i], "eight", 8);	
+		ht_add_int(ht[i], "eight", 8);
 		ht_add_int(ht[i], "nine", 9);
 		ht_add_int(ht[i], "ten", 10);
 		ht_add_int(ht[i], "eleven", 11);
-		
+
 		result[i] += ht_get_int(ht[i], "one");
 		result[i] += ht_get_int(ht[i], "two");
 		result[i] += ht_get_int(ht[i], "three");
@@ -41,10 +41,10 @@ test_probes()
 		result[i] += ht_get_int(ht[i], "nine");
 		result[i] += ht_get_int(ht[i], "ten");
 		result[i] += ht_get_int(ht[i], "eleven");
-		
+
 		ht_free(ht[i]);
 	}
-		
+
 	mu_assert("error probes: linear probe res != 66", result[0] == 66);
 	mu_assert("error probes: quadratic probe res != 66", result[1] == 66);
 
@@ -56,11 +56,11 @@ static char * all_tests() {
 	return 0;
 }
 
-int 
+int
 main()
-{	
+{
 	char *result = all_tests();
-	if (result != 0) 
+	if (result != 0)
 		printf("%s\n", result);
 	else
 		printf("ALL TESTS PASSED\n");

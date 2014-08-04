@@ -3,7 +3,7 @@
 
 /*
  * hash.h -- generic closed hash table implementation.
- * constant memory, linear/quadratic probing, variable max keylength 
+ * constant memory, linear/quadratic probing, variable max keylength
  * by sixthgear. BSD Licenced
  */
 
@@ -29,7 +29,7 @@ ht_init(int num, size_t type_size, int key_len, void *hf, void *pf)
 	total_size += sizeof(char) * key_len * num; 	/* keys */
 	total_size += (type_size * num); 		/* values */
 	table *ht = malloc(total_size);
-	ht->size = num;	
+	ht->size = num;
 	ht->key_len = key_len;
 	ht->hashfunc = hf;
 	ht->probefunc = pf;
@@ -44,7 +44,7 @@ ht_free(table *ht)
 	free(ht);
 }
 
-unsigned long 
+unsigned long
 ht_hash(const char *key)
 {
 	int c;
@@ -74,7 +74,7 @@ ht_lin_probe(table *ht, const char *key, bool error_on_blank)
 		k = (k + 1) % ht->size;
 	}
 	/* table is full */
-	return -1; 
+	return -1;
 }
 
 unsigned long
@@ -85,21 +85,21 @@ ht_quad_probe(table *ht, const char *key, bool error_on_blank)
 	for (int j=1; j<=ht->size; j++) {
 		if (*ht_key_idx(ht, i) == '\0')
 			/* blank */
-			return error_on_blank ? -1 : i; 
+			return error_on_blank ? -1 : i;
 		if (strncmp(ht_key_idx(ht, i), key, ht->key_len-1) == 0)
 			/* key exists */
 			return i;
 		i = ( k + j * j ) % ht->size;
 	}
 	/* table is full */
-	return -1; 
+	return -1;
 }
 
 unsigned long
 ht_add_key(table *ht, const char *key)
 {
 	unsigned long i = ht->probefunc(ht, key, false);
-	if (i == -1) {			
+	if (i == -1) {
 		fprintf(stderr, "HT ERROR: table full.\n");
 		exit(1);
 	}
@@ -108,7 +108,7 @@ ht_add_key(table *ht, const char *key)
 	return i;
 }
 
-unsigned long 
+unsigned long
 ht_get_key(table *ht, const char *key)
 {
 	unsigned long i = ht->probefunc(ht, key, true);
@@ -132,32 +132,32 @@ ht_has_key(table *ht, const char *key)
 	return ht->probefunc(ht, key, 1) != -1;
 }
 
-#define HASH_GENERATE_TYPE(TYPE) HASH_GENERATE_NAME(TYPE, TYPE) 
-#define HASH_GENERATE_NAME(TYPE, NAME)					       \
-table *								       	       \
-ht_init_##NAME(int num, int key_len, void *hf, void *pf) 		       \
-{ 									       \
-	return ht_init(num, sizeof(TYPE), key_len, hf, pf);		       \
-}									       \
-void								       	       \
-ht_add_##NAME(table *ht, const char *key, TYPE value)			       \
-{									       \
-	((TYPE *) ht->values)[ht_add_key(ht, key)] = value;		       \
-}									       \
-TYPE								       	       \
-ht_get_##NAME(table *ht, const char *key)				       \
-{									       \
-	return ((TYPE *) ht->values)[ht_get_key(ht, key)];		       \
-}                                                                              \
-TYPE *									       \
-ht_ptr_##NAME(table *ht, const char *key)				       \
-{									       \
-	return ((TYPE *) ht->values) + ht_get_key(ht, key);		       \
-}                                                                              \
-void								       	       \
-ht_del_##NAME(table *ht, const char *key)				       \
-{									       \
-	ht_del_key(ht, key);						       \
+#define HASH_GENERATE_TYPE(TYPE) HASH_GENERATE_NAME(TYPE, TYPE)
+#define HASH_GENERATE_NAME(TYPE, NAME)						\
+table *										\
+ht_init_##NAME(int num, int key_len, void *hf, void *pf) 			\
+{ 										\
+	return ht_init(num, sizeof(TYPE), key_len, hf, pf);			\
+}										\
+void										\
+ht_add_##NAME(table *ht, const char *key, TYPE value)				\
+{										\
+	((TYPE *) ht->values)[ht_add_key(ht, key)] = value;			\
+}										\
+TYPE										\
+ht_get_##NAME(table *ht, const char *key)					\
+{										\
+	return ((TYPE *) ht->values)[ht_get_key(ht, key)];			\
+}										\
+TYPE *										\
+ht_ptr_##NAME(table *ht, const char *key)					\
+{										\
+	return ((TYPE *) ht->values) + ht_get_key(ht, key);			\
+}										\
+void										\
+ht_del_##NAME(table *ht, const char *key)					\
+{										\
+	ht_del_key(ht, key);							\
 }
 
 #endif
